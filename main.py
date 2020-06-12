@@ -14,7 +14,7 @@ def send_welcome(message):
 @bot.message_handler(commands=['room'])
 def send_welcome(message):
     data_result = ''
-    cursor.execute("SELECT * FROM `kamar` ")
+    cursor.execute("SELECT kamar.nomor_kamar, jeniskamar.nama_jenis_kamar, jeniskamar.harga_jenis_kamar, jeniskamar.keterangan FROM kamar, jeniskamar WHERE kamar.id_jenis_kamar = jeniskamar.id_jenis_kamar ")
     data = cursor.fetchall()
     row = cursor.rowcount
     print(data)
@@ -23,6 +23,10 @@ def send_welcome(message):
         for x in data:
             numbering += 1
             data_result = data_result + str(numbering) + ". " + str(x) + '\n'
+            data_result = data_result.replace('(', '')
+            data_result = data_result.replace(')', '')
+            data_result = data_result.replace("'", '')
+            data_result = data_result.replace(",", '')
         bot.reply_to(message, str(data_result))
 
 
