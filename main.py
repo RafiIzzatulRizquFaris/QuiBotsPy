@@ -14,10 +14,9 @@ def send_welcome(message):
 @bot.message_handler(commands=['room'])
 def send_welcome(message):
     data_result = ''
-    cursor.execute("SELECT kamar.nomor_kamar, jeniskamar.nama_jenis_kamar, jeniskamar.harga_jenis_kamar, jeniskamar.keterangan FROM kamar, jeniskamar WHERE kamar.id_jenis_kamar = jeniskamar.id_jenis_kamar ")
+    cursor.execute("SELECT kamar.nomor_kamar, jeniskamar.nama_jenis_kamar, jeniskamar.harga_jenis_kamar, jeniskamar.keterangan FROM jeniskamar, kamar LEFT JOIN reservasi ON reservasi.id_kamar = kamar.id_kamar WHERE reservasi.id_reservasi IS null AND kamar.id_jenis_kamar = jeniskamar.id_jenis_kamar ")
     data = cursor.fetchall()
     row = cursor.rowcount
-    print(data)
     if row > 0:
         numbering = 0
         for x in data:
