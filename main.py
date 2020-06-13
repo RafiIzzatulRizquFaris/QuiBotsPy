@@ -45,7 +45,6 @@ def send_welcome(message):
     order = message.text.split('#')
     room_number = order[1]
     checkout_date = order[2]
-    print(room_number)
     cursor.execute("SELECT kamar.id_kamar FROM `kamar` WHERE `nomor_kamar` = " + room_number)
     data_room = cursor.fetchone()
     data_room_str = str(data_room)
@@ -68,7 +67,23 @@ def send_welcome(message):
     cursor.execute("INSERT INTO `roomcheckout` (`id_checkout`, `id_reservasi`, `id_pelanggan`, `id_kamar`, `tgl_checkout`) VALUES (NULL, '"+id_reservasi_str.strip()+"', '"+id_pelanggan_str.strip()+"', '"+data_room_str.strip()+"', '"+checkout_date+"');")
     connector.commit()
 
-    bot.reply_to(message, data_room_str.strip())
+    cursor.execute("SELECT pembayaran.id_pembayaran FROM `pembayaran` WHERE `id_checkout` = " + id_reservasi_str.strip())
+    id_pembayaran = cursor.fetchone()
+    id_pembayaran_str = str(id_pembayaran)
+    id_pembayaran_str = id_pembayaran_str.replace('(', '')
+    id_pembayaran_str = id_pembayaran_str.replace(')', '')
+    id_pembayaran_str = id_pembayaran_str.replace(',', '')
+
+    cursor.execute("SELECT pembayaran.total_pembayaran FROM `pembayaran` WHERE `id_checkout` = " + id_reservasi_str.strip())
+    total_pembayaran = cursor.fetchone()
+    total_pembayaran_str = str(total_pembayaran)
+    total_pembayaran_str = total_pembayaran_str.replace('(', '')
+    total_pembayaran_str = total_pembayaran_str.replace(')', '')
+    total_pembayaran_str = total_pembayaran_str.replace(',', '')
+
+    message_response = "Your total payment id is " + id_pembayaran_str.strip() + " with total order " + total_pembayaran_str.strip()
+
+    bot.reply_to(message, message_response)
 
 
 @bot.message_handler(commands=['room'])
